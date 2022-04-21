@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/22 17:02:43 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/11 18:42:58 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/21 20:22:31 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,28 @@ static t_phlist	*ft_lstnew(int num, t_arg args)
 	nelem = (t_phlist *)malloc(sizeof(t_phlist));
 	if (!nelem)
 		return (NULL);
-	nelem->fork = 0 * args.num * num;
+	nelem->fork = 0;
 	nelem->num = num;
 	nelem->maxphil = args.num;
 	nelem->tmdie = args.tmdie;
 	nelem->tmeat = args.tmeat;
 	nelem->tmsleep = args.tmsleep;
-	nelem->repeats = args.repeats;
+	if (args.repeats > 0)
+		nelem->needrepeat = 1;
+	if (nelem->needrepeat == 0)
+		nelem->repeats = 1;
+	else
+		nelem->repeats = args.repeats;
 	nelem->dead = 0;
-	nelem->time = ft_time(0);
+	nelem->noprint = 0;
+	nelem->turn = 0;
+	if (num % 2 != 0)
+		nelem->turn = 1;
+	nelem->timestart = ft_time(0);
+	nelem->time = 0;
+	nelem->tmhungry = 0;
 	nelem->next = NULL;
+	pthread_mutex_init(&nelem->mutexfork, NULL);
 	return (nelem);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/23 14:29:22 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/11 18:41:44 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/21 18:36:31 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,13 @@ time_t	ft_time(time_t start)
 	gettimeofday(&time, NULL);
 	actual = (time.tv_sec * 1000) + (time.tv_usec / 1000) - start;
 	return (actual);
+}
+
+void	ft_usleep(time_t sleep)
+{
+	time_t	time;
+
+	time = ft_time(0);
+	while (ft_time(time) < sleep)
+		usleep(100);
 }
