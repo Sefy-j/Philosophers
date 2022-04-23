@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/23 18:01:54 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/11 14:42:45 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/23 22:47:16 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ static int	ft_copynums(int argc, char **argv, t_arg *args)
 	if (args->num < 0 || args->tmdie < 0 || args->tmeat < 0 \
 	|| args->tmeat < 0 || args->tmsleep < 0 || args-> repeats < 0)
 		return (ft_errors(ERRNEGNUM, NULL));
+	if (i == 5)
+		args->repeats = -1;
 	return (0);
 }
 

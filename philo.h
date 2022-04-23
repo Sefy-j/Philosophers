@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 13:34:47 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/21 20:19:02 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/23 17:46:33 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ typedef struct s_list
 	int				repeats;
 	int				needrepeat;
 	int				dead;
-	int				noprint;
-	int				turn;
+	int				deadprint;
+	int				eat;
 	time_t			timestart;
 	time_t			time;
 	time_t			tmhungry;

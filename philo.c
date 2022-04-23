@@ -6,85 +6,120 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 13:14:52 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/21 20:21:52 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/23 23:53:21 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_dead(t_phlist lst)
+int	ft_alleat(t_phlist lst, pthread_mutex_t	*mutexeat)
 {
 	int	i;
+	int	eat;
 
 	i = 0;
+	eat = 0;
+	pthread_mutex_lock (mutexeat);
 	while (i < lst.maxphil)
 	{
-		if (lst.dead == 1)
-			return (1);
+		
+		if (lst.repeats <= 0)
+			eat++;
 		i++;
 		lst = *lst.next;
 	}
-	return (0);
+	pthread_mutex_unlock (mutexeat);
+	if (eat == lst.maxphil)
+		return (1);
+	else
+		return (0);
 }
 
-void	ft_printstatus(t_phlist lst, char c)
+void	ft_printstatus(t_phlist lst, char c, int *dead, pthread_mutex_t	*mutexdead, pthread_mutex_t	*mutexeat)
 {
-	//int	dead;
-
 	lst.time = ft_time(lst.timestart);
-	//dead = ft_dead(lst);
-	//if(!dead)
-	//{
+	pthread_mutex_lock (mutexdead);
+	if (!*dead && !ft_alleat(lst, mutexeat))
+	{
 		if (c == 'f')
-			printf(CYAN"%ld(ms): Philosopher %d has taken a fork\n"RESET, lst.time, lst.num);
+		printf(CYAN"%ld(ms): Philosopher %d has taken a fork\n"RESET, lst.time, lst.num);
 		if (c == 'e')
 			printf(GREEN"%ld(ms): Philosopher %d is eating\n"RESET, lst.time, lst.num);
 		if (c == 's')
 			printf(PURPLE"%ld(ms): Philosopher %d is sleeping\n"RESET, lst.time, lst.num);
 		if (c == 't')
 			printf(YELLOW"%ld(ms): Philosopher %d is thinking\n"RESET, lst.time, lst.num);
-		if (c == 'd')
-			printf(RED"%ld(ms): Philosopher %d died\n"RESET, lst.time, lst.num);
-	//}
+	}
+	pthread_mutex_unlock (mutexdead);
 	return ;
 }
 
 void	*ft_starteating(void *arg)
 {
-	t_phlist	*lst;
+	t_phlist				*lst;
+	static int				dead;
+	static pthread_mutex_t	mutexdead = PTHREAD_MUTEX_INITIALIZER;
+	static pthread_mutex_t	mutexeat = PTHREAD_MUTEX_INITIALIZER;
 
 	lst = (t_phlist *)arg;
-	while (!ft_dead(*lst) && lst->repeats > 0)
+	
+	while (!ft_alleat(*lst, &mutexeat))
 	{
 		lst->time = ft_time(lst->timestart);
+		pthread_mutex_lock (&mutexdead);
 		if (lst->time - lst->tmhungry > lst->tmdie)
+			dead++;
+		if (dead)
 		{
-			lst->dead = 1;
-			break ;
+			if (dead == 1)
+				printf(RED"%ld(ms): Philosopher %d died\n"RESET, lst->time, lst->num);
+			dead++;
+			pthread_mutex_unlock (&mutexdead);
+			break;
 		}
+		pthread_mutex_unlock (&mutexdead);
 		pthread_mutex_lock (&lst->mutexfork);
-		lst->fork = 1;
-		//pthread_mutex_lock (&lst->prev->mutexfork);
-		if (lst->next->fork == 0)
+		if (lst->fork == 0)
 		{
+			lst->fork = 1;
+			pthread_mutex_unlock (&lst->mutexfork);
 			pthread_mutex_lock (&lst->next->mutexfork);
-			ft_printstatus(*lst, 'f');
-			ft_printstatus(*lst, 'f');
-			ft_printstatus(*lst, 'e');
-			lst->tmhungry = ft_time(lst->timestart);
-			if (lst->needrepeat)
-				lst->repeats--;
-			ft_usleep(lst->tmeat);
-			pthread_mutex_unlock (&lst->next->mutexfork);
-			ft_printstatus(*lst, 't');
-			ft_usleep(lst->tmsleep);
+			if (lst->next->fork == 0)			
+			{
+				lst->next->fork = 1;
+				pthread_mutex_unlock (&lst->next->mutexfork);
+				ft_printstatus(*lst, 'f', &dead, &mutexdead, &mutexeat);
+				ft_printstatus(*lst, 'f', &dead, &mutexdead, &mutexeat);
+				ft_printstatus(*lst, 'e', &dead, &mutexdead, &mutexeat);
+				lst->tmhungry = ft_time(lst->timestart);
+				if (lst->needrepeat)
+				{
+					pthread_mutex_lock (&mutexeat);
+					lst->repeats--;
+					pthread_mutex_unlock (&mutexeat);
+				}
+				ft_usleep(lst->tmeat);
+				pthread_mutex_lock (&lst->next->mutexfork);
+				lst->next->fork = 0;
+				pthread_mutex_unlock (&lst->next->mutexfork);
+				pthread_mutex_lock (&lst->mutexfork);
+				lst->fork = 0;
+				pthread_mutex_unlock (&lst->mutexfork);
+				ft_printstatus(*lst, 's', &dead, &mutexdead, &mutexeat);
+				ft_usleep(lst->tmsleep);
+				ft_printstatus(*lst, 't', &dead, &mutexdead, &mutexeat);
+			}
+			else
+			{
+				pthread_mutex_unlock (&lst->next->mutexfork);
+				pthread_mutex_lock (&lst->mutexfork);
+				lst->fork = 0;
+				pthread_mutex_unlock (&lst->mutexfork);
+			}
 		}
-		lst->fork = 0;	
-		//pthread_mutex_unlock (&lst->prev->mutexfork);
-		pthread_mutex_unlock (&lst->mutexfork);
+		else
+			pthread_mutex_unlock (&lst->mutexfork);
 	}
-	if (ft_dead(*lst))
-		ft_printstatus(*lst, 'd');
 	return (0);
 }
 

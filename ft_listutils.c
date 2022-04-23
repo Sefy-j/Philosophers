@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/22 17:02:43 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/21 20:22:31 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/23 22:51:40 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,16 @@ static t_phlist	*ft_lstnew(int num, t_arg args)
 	nelem->tmdie = args.tmdie;
 	nelem->tmeat = args.tmeat;
 	nelem->tmsleep = args.tmsleep;
-	if (args.repeats > 0)
+	if (args.repeats >= 0)
+	{
 		nelem->needrepeat = 1;
-	if (nelem->needrepeat == 0)
-		nelem->repeats = 1;
-	else
 		nelem->repeats = args.repeats;
+	}
+	else
+		nelem->repeats = 1;
 	nelem->dead = 0;
-	nelem->noprint = 0;
-	nelem->turn = 0;
-	if (num % 2 != 0)
-		nelem->turn = 1;
+	nelem->deadprint = 0;
+	nelem->eat = 0;
 	nelem->timestart = ft_time(0);
 	nelem->time = 0;
 	nelem->tmhungry = 0;
