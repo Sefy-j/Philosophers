@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/22 17:02:43 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/23 22:51:40 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/25 12:50:21 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	ft_lstdelone(t_phlist *lst)
 void	ft_lstclear(t_phlist **lst, int num)
 {
 	t_phlist	*tmplist;
-	int	i;
+	int			i;
 
 	if (!lst)
 		return ;
@@ -35,6 +35,17 @@ void	ft_lstclear(t_phlist **lst, int num)
 		i++;
 	}
 	*lst = NULL;
+}
+
+static void	ft_lstnewinit(t_phlist	*nelem)
+{
+	nelem->dead = 0;
+	nelem->deadprint = 0;
+	nelem->eat = 0;
+	nelem->timestart = ft_time(0);
+	nelem->time = 0;
+	nelem->tmhungry = 0;
+	nelem->next = NULL;
 }
 
 static t_phlist	*ft_lstnew(int num, t_arg args)
@@ -57,13 +68,7 @@ static t_phlist	*ft_lstnew(int num, t_arg args)
 	}
 	else
 		nelem->repeats = 1;
-	nelem->dead = 0;
-	nelem->deadprint = 0;
-	nelem->eat = 0;
-	nelem->timestart = ft_time(0);
-	nelem->time = 0;
-	nelem->tmhungry = 0;
-	nelem->next = NULL;
+	ft_lstnewinit(nelem);
 	pthread_mutex_init(&nelem->mutexfork, NULL);
 	return (nelem);
 }
@@ -73,7 +78,7 @@ t_phlist	*ft_createlist(t_arg args)
 	t_phlist	*lst;
 	t_phlist	*temp;
 	t_phlist	*first;
-	int		i;
+	int			i;
 
 	i = 1;
 	lst = ft_lstnew(i, args);

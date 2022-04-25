@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/23 14:29:22 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/04/21 18:36:31 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/04/25 12:47:37 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int	ft_errors(int error, char *name)
 
 time_t	ft_time(time_t start)
 {
-	struct timeval time;
-	time_t	actual;
+	struct timeval	time;
+	time_t			actual;
 
 	gettimeofday(&time, NULL);
 	actual = (time.tv_sec * 1000) + (time.tv_usec / 1000) - start;

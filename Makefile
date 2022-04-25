@@ -1,4 +1,5 @@
-SRCS	= philo.c ft_philoutils.c ft_utils.c ft_parsearg.c ft_listutils.c
+SRCS	= philo.c ft_philoutils.c ft_utils.c ft_parsearg.c ft_listutils.c \
+			ft_checkandprint.c
 
 OBJS	= ${SRCS:.c=.o}
 
