@@ -6,7 +6,7 @@
 /*   By: jlopez-f <jlopez-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/23 14:29:22 by jlopez-f          #+#    #+#             */
-/*   Updated: 2022/06/02 17:13:27 by jlopez-f         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:47:03 by jlopez-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ void	ft_usleep(time_t sleep, t_phlist *lst, int *dead, pthread_mutex_t *mutx)
 	time = ft_time(0);
 	while (ft_time(time) < sleep)
 	{
-		ft_checkdead(lst, dead, mutx);
+		if (ft_checkdead(lst, dead, mutx))
+			return ;
 		usleep(100);
 	}
 }
